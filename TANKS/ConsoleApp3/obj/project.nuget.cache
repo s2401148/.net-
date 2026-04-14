@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "mf/Pbkze7bU=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\Anhelina\\OneDrive - Business College Helsinki\\Tiedostot\\vs\\TANKS\\ConsoleApp3\\ConsoleApp3.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Anhelina\\.nuget\\packages\\raylib-cs\\7.0.2\\raylib-cs.7.0.2.nupkg.sha512"
+  ],
+  "logs": []
+}
