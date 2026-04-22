@@ -5,6 +5,9 @@ using System;
 
 class Program
 {
+    /* Use an enum for Type 
+     * That way nobody has to remember what number means what
+     */
     struct Item
     {
         public Rectangle Rect;
@@ -13,6 +16,10 @@ class Program
         public bool Active;
     }
 
+    /* I would like to see different classes
+     * and such. Not just everything in Main
+     * Otherwise the structure is okay.
+     */
     static void Main()
     {
         const int screenWidth = 800;
@@ -20,7 +27,7 @@ class Program
         Raylib.InitWindow(screenWidth, screenHeight, "Catch & Dodge Game");
         Raylib.InitAudioDevice();
 
-    
+        /* The github did not have these images and sounds */
         Texture2D playerTex = Raylib.LoadTexture("player.png");
      
         Raylib.SetTextureFilter(playerTex, TextureFilter.Point);
@@ -55,13 +62,33 @@ class Program
 
                 player.X = Raylib.GetMouseX() - player.Width / 2;
 
+                /* Here you can use a Clamp to make it clear
+                 * what is being done:
+                 */
+                player.X = Math.Clamp(player.X, 0, screenWidth - player.Width);
+
                 if (player.X < 0) player.X = 0;
                 if (player.X > screenWidth - player.Width) player.X = screenWidth - player.Width;
 
+                /* I think it is more elegant to use 
+                 * float lastSpawnTime and compare that to 
+                 * Raylib.GetElapsed() to know how much time has passed.
+                 * That way you don't have to worry about the Timer
+                 */ 
                 spawnTimer += dt;
                 if (spawnTimer > 0.8f)
                 {
+                    /* Is 1 good or bad? This is why should use enums */
                     int type = rng.Next(0, 10) > 7 ? 1 : 0;
+                    /* For some reason AI does this. This should not be
+                     * done for several reasons:
+                     * 1) Items can be created differently across the code
+                     * 2) If a variable is added to Item class and you forget to set it here you don't get any errors
+                     * 3) You need to type more and some logic leaks outside the class, like the Color selection here.
+                     * 
+                     * Write and use a constructor instead.
+                     */
+                    
                     items.Add(new Item
                     {
                         Rect = new Rectangle(rng.Next(0, screenWidth - 30), -30, 30, 30),
@@ -97,10 +124,19 @@ class Program
                     items[i] = item;
                 }
             }
+            /* Putting multiple commands on a single line servers no 
+             * purpose and makes things look messy. 
+             */
             else if (Raylib.IsKeyPressed(KeyboardKey.R))
             {
                 score = 0; lives = 3; items.Clear(); gameOver = false;
             }
+
+            /* Since the code already cleanly separates Update and Draw
+             * they could as well be in functions
+             * void Update()
+             * void Draw()
+             */
 
             Raylib.BeginDrawing();
             Raylib.ClearBackground(Color.DarkBlue);
@@ -109,12 +145,21 @@ class Program
             {
                 foreach (var item in items)
                 {
+					/* Here the item drawing logic is in the main loop
+                    * and depends on the type of the item.
+                    * This logic should be in the class itself
+                    * and here should just be
+                    * item.Draw();
+                    */
                     if (item.Active)
                     {
+                        
                         if (item.Type == 0) Raylib.DrawCircle((int)item.Rect.X + 15, (int)item.Rect.Y + 15, 12, item.Color);
                         else Raylib.DrawRectangleRec(item.Rect, item.Color);
                     }
                 }
+                /* Same for player. Move class dependent logic to be inside class
+                 */
                 if (playerTex.Id > 0)
                 {
                     Vector2 position = new Vector2(player.X, player.Y);
